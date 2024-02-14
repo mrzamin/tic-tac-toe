@@ -1,0 +1,16 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.board {
+  height: 500px;
+  width: 500px;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  background-color: yellow;
+}
+
+.board > div {
+  border: 1px solid black;
+}
