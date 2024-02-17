@@ -65,7 +65,11 @@ function gameController(
 
   let gameOver = false;
 
+  let isTie = false;
+
   const getGameStatus = () => gameOver;
+
+  const getTieStatus = () => isTie;
 
   const resetGame = () => {
     activePlayer = players[0];
@@ -112,15 +116,25 @@ function gameController(
       if (cellA !== "-" && cellB !== "-" && cellC !== "-") {
         if (cellA === cellB && cellB === cellC) {
           gameOver = true;
-
-          // gameArray.forEach((row) => {
-          //   row.forEach((column) => {
-          //     column.clearCellValue();
-          //   });
-          // });
           break;
         }
       }
+    }
+  };
+
+  const checkDraw = () => {
+    let emptyCells = 0;
+    const gameWon = gameOver;
+
+    for (let i = 0; i < gameArray.length; i++) {
+      for (let j = 0; j < gameArray[i].length; j++) {
+        gameArray[i][j].getValue() == "-"
+          ? emptyCells++
+          : (emptyCells = emptyCells);
+      }
+    }
+    if (emptyCells == 0 && gameWon == false) {
+      isTie = true;
     }
   };
 
@@ -128,8 +142,11 @@ function gameController(
     board.dropToken(row, column, getActivePlayer().token);
     // console.log(`Dropping ${getActivePlayer().name}'s token...`);
     checkWinner();
+    checkDraw();
 
     if (gameOver) {
+      return;
+    } else if (isTie) {
       return;
     } else {
       switchPlayerTurn();
@@ -140,6 +157,7 @@ function gameController(
     playRound,
     getActivePlayer,
     getGameStatus,
+    getTieStatus,
     getBoard: board.getBoard,
   };
 }
@@ -147,10 +165,11 @@ function gameController(
 function screenController() {
   const game = gameController();
   const boardDiv = document.querySelector(".board");
-  const playerTurnDivs = document.querySelectorAll(".turn");
+  const playerTurnDiv = document.querySelector(".turn");
   const modal = document.querySelector("#modal");
   const overlay = document.querySelector("#overlay");
   const closeBtn = document.querySelector(".modal-close");
+  const result = document.querySelector(".result");
 
   const openModal = () => {
     modal.classList.add("active");
@@ -164,16 +183,21 @@ function screenController() {
 
   const updateScreen = () => {
     boardDiv.textContent = "";
-
     const board = game.getBoard();
     const activePlayer = game.getActivePlayer();
     const gameStatus = game.getGameStatus();
+    const isTie = game.getTieStatus();
 
     if (gameStatus) {
-      playerTurnDivs.textContent = `${activePlayer.name} won!!!`;
+      playerTurnDiv.textContent = `${activePlayer.name} won!!!`;
+      result.textContent = `${activePlayer.name} won!!!`;
+      openModal();
+    } else if (isTie) {
+      playerTurnDiv.textContent = "It's a tie :(";
+      result.textContent = "It's a tie :(";
       openModal();
     } else {
-      playerTurnDivs.textContent = `${activePlayer.name}'s turn...`;
+      playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
     }
 
     board.forEach((row, rowIndex) => {
@@ -204,10 +228,11 @@ function screenController() {
       updateScreen();
     }
   }
-  boardDiv.addEventListener("click", boardClickHandler);
 
+  //Event listeners:
+
+  boardDiv.addEventListener("click", boardClickHandler);
   closeBtn.addEventListener("click", closeModal);
-  // boardDiv.addEventListener("click", boardClickHandler);
 
   updateScreen();
 }
