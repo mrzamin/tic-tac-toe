@@ -147,9 +147,20 @@ function gameController(
 function screenController() {
   const game = gameController();
   const boardDiv = document.querySelector(".board");
-  const playerTurnDiv = document.querySelector(".turn");
-  // let previousClickedCol;
-  // let previousClickedRow;
+  const playerTurnDivs = document.querySelectorAll(".turn");
+  const modal = document.querySelector("#modal");
+  const overlay = document.querySelector("#overlay");
+  const closeBtn = document.querySelector(".modal-close");
+
+  const openModal = () => {
+    modal.classList.add("active");
+    overlay.classList.add("active");
+  };
+
+  const closeModal = () => {
+    modal.classList.remove("active");
+    overlay.classList.remove("active");
+  };
 
   const updateScreen = () => {
     boardDiv.textContent = "";
@@ -159,9 +170,10 @@ function screenController() {
     const gameStatus = game.getGameStatus();
 
     if (gameStatus) {
-      playerTurnDiv.textContent = `${activePlayer.name} won!!!`;
+      playerTurnDivs.textContent = `${activePlayer.name} won!!!`;
+      openModal();
     } else {
-      playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
+      playerTurnDivs.textContent = `${activePlayer.name}'s turn...`;
     }
 
     board.forEach((row, rowIndex) => {
@@ -194,6 +206,7 @@ function screenController() {
   }
   boardDiv.addEventListener("click", boardClickHandler);
 
+  closeBtn.addEventListener("click", closeModal);
   // boardDiv.addEventListener("click", boardClickHandler);
 
   updateScreen();
