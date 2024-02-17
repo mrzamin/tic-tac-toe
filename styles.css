@@ -1,16 +1,179 @@
+@import url("https://fonts.googleapis.com/css2?family=Yomogi&display=swap");
+
 * {
   margin: 0;
   padding: 0;
+  --green-accent-color: rgb(58, 176, 58);
 }
+
+body {
+  font-family: "Yomogi", cursive;
+  font-size: 0.8rem;
+}
+/* main grid */
+.wrapper {
+  height: 100vh;
+  display: grid;
+  grid-template-rows: 2fr 20fr 2fr;
+}
+
+.header {
+  color: var(--green-accent-color);
+  display: flex;
+  align-items: center;
+  padding-left: 1rem;
+  gap: 5px;
+}
+
+.header img {
+  width: 45px;
+}
+
+.footer {
+  border: 1px solid red;
+}
+
+.main-wrapper {
+  padding: 2rem;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px -50px 36px -28px inset;
+}
+
+.main {
+  /* border: 1px solid orange; */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.section-1 {
+  display: flex;
+  flex-direction: column;
+}
+
+.board-wrapper {
+  background-color: white;
+  display: grid;
+  gap: 1rem;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  box-shadow: 0px 0px 5px 1px grey;
+  border-radius: 8px;
+}
+
+.board-wrapper h2:hover {
+  color: var(--green-accent-color);
+}
+
+.turn {
+  color: var(--green-accent-color);
+}
+
+.section-2 {
+  /* border: 1px solid blue; */
+  align-items: flex-start;
+
+  padding: 1rem;
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.score {
+  background-color: #f0f0f0;
+  padding: 1rem;
+
+  box-shadow: 0px 0px 5px 1px grey;
+}
+
+.score:hover {
+  background-color: white;
+  box-shadow: 0px 0px 2px 1px var(--green-accent-color);
+}
+
+.section-2 button {
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+
+  font-family: "Yomogi", cursive;
+  font-weight: 900;
+}
+
+.section-2 button:hover {
+  background-color: rgb(58, 176, 58);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+/* .main-wrapper {
+  position: fixed;
+  align-content: center;
+  /* top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); */
+/* border: 1px solid red;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  place-content: center;
+} */
+
+/* .section-1 {
+  border: 1px solid blue;
+/* } */
+/* .gameboard {
+  /* height: 500px;
+  width: 390px; */
+
+/* padding: 1rem; */
+
+/* box-shadow: 0px 0px 5px 1px grey; */
+
+/* .board-wrapper {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-between; */
+/* align-items: center; */
+/* border: 1px solid black; */
+/* height: 100%; */
 
 .board {
-  height: 500px;
-  width: 500px;
+  width: 300px;
+  height: 300px;
   display: grid;
   grid-template: repeat(3, 1fr) / repeat(3, 1fr);
-  background-color: yellow;
+  gap: 0.05rem;
 }
 
-.board > div {
-  border: 1px solid black;
+.square {
+  background-color: white;
+  border: 2px solid #ccc;
+  color: #333;
+  font-family: "Yomogi", cursive;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
 }
+
+.square:hover {
+  background-color: #f0f0f0;
+}
+
+/* .scorecard {
+  border: 1px solid purple;
+  height: 200px;
+  width: 200px;
+  /* height: 250px;
+  width: 250px; */
+
+/* .scorecard-container {
+  border: 1px solid green;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
+} */

@@ -18,7 +18,7 @@ function gameboard() {
   const getBoard = () => board;
 
   const dropToken = (row, column, player) => {
-    const availableCoordinate = board[row][column].getValue() === 0;
+    const availableCoordinate = board[row][column].getValue() === "-";
 
     if (!availableCoordinate) return;
     board[row][column].addToken(player);
@@ -28,14 +28,14 @@ function gameboard() {
 }
 
 function cell() {
-  let value = 0;
+  let value = "-";
 
   const addToken = (playerToken) => {
     value = playerToken;
   };
 
   const clearCellValue = () => {
-    value = 0;
+    value = "-";
   };
 
   const getValue = () => value;
@@ -48,8 +48,8 @@ function cell() {
 }
 
 function gameController(
-  playerOneName = "Player One",
-  playerTwoName = "Player Two"
+  playerOneName = "Player 1",
+  playerTwoName = "Player 2"
 ) {
   const board = gameboard();
 
@@ -109,7 +109,7 @@ function gameController(
       const cellB = winCombination[1].getValue();
       const cellC = winCombination[2].getValue();
 
-      if (cellA !== 0 && cellB !== 0 && cellC !== 0) {
+      if (cellA !== "-" && cellB !== "-" && cellC !== "-") {
         if (cellA === cellB && cellB === cellC) {
           gameOver = true;
 
@@ -148,6 +148,8 @@ function screenController() {
   const game = gameController();
   const boardDiv = document.querySelector(".board");
   const playerTurnDiv = document.querySelector(".turn");
+  // let previousClickedCol;
+  // let previousClickedRow;
 
   const updateScreen = () => {
     boardDiv.textContent = "";
@@ -169,25 +171,28 @@ function screenController() {
         squareBtn.dataset.column = columnIndex;
         squareBtn.dataset.row = rowIndex;
         squareBtn.textContent = column.getValue();
-        squareBtn.addEventListener("click", boardClickHandler, { once: true });
         boardDiv.appendChild(squareBtn);
       });
     });
   };
 
   function boardClickHandler(e) {
-    const selectedColumn = e.target.dataset.column;
-    const selectedRow = e.target.dataset.row;
-    console.log("clicked");
-    const gameStatus = game.getGameStatus();
+    if (e.target.textContent != "-") {
+      return;
+    } else {
+      const selectedColumn = e.target.dataset.column;
+      const selectedRow = e.target.dataset.row;
+      const gameStatus = game.getGameStatus();
 
-    if (gameStatus) return; // Does not allow clicks after win.
-    if (!selectedColumn) return;
-    if (!selectedRow) return;
+      if (!selectedColumn) return;
+      if (!selectedRow) return;
+      if (gameStatus) return; // Does not allow clicks after win.
 
-    game.playRound(selectedRow, selectedColumn);
-    updateScreen();
+      game.playRound(selectedRow, selectedColumn);
+      updateScreen();
+    }
   }
+  boardDiv.addEventListener("click", boardClickHandler);
 
   // boardDiv.addEventListener("click", boardClickHandler);
 
