@@ -67,13 +67,12 @@ function gameController(
 
   let isTie = false;
 
-  const wins = [];
+  let wins = [];
 
   const getPlayerOneScore = () => {
     const playerOneWinCount = wins.filter(
       (item) => item == players[0].token
     ).length;
-
     return playerOneWinCount;
   };
 
@@ -81,7 +80,6 @@ function gameController(
     const playerTwoWinCount = wins.filter(
       (item) => item == players[1].token
     ).length;
-
     return playerTwoWinCount;
   };
 
@@ -92,6 +90,14 @@ function gameController(
   const resetGame = () => {
     activePlayer = players[0];
     gameOver = false;
+    isTie = false;
+    wins = [];
+
+    gameArray.forEach((row) => {
+      row.forEach((column) => {
+        column.clearCellValue();
+      });
+    });
   };
 
   const switchPlayerTurn = () => {
@@ -107,12 +113,6 @@ function gameController(
       [cell3, cell4, cell5],
       [cell6, cell7, cell8],
     ] = gameArray;
-
-    console.log(cell0);
-    console.log(cell0.getValue());
-    console.log(cell1.getValue());
-
-    console.log(cell2.getValue());
 
     const winCombinations = [
       [cell0, cell1, cell2], //rows
@@ -180,6 +180,7 @@ function gameController(
     getPlayerTwoScore,
     getTieStatus,
     getBoard: board.getBoard,
+    resetGame,
   };
 }
 
@@ -191,6 +192,7 @@ function screenController() {
   const overlay = document.querySelector("#overlay");
   const closeBtn = document.querySelector(".modal-close");
   const result = document.querySelector(".result");
+  const resetBtn = document.querySelector(".reset");
 
   const openModal = () => {
     modal.classList.add("active");
@@ -200,6 +202,11 @@ function screenController() {
   const closeModal = () => {
     modal.classList.remove("active");
     overlay.classList.remove("active");
+  };
+
+  const resetGame = () => {
+    game.resetGame();
+    updateScreen();
   };
 
   const updateScreen = () => {
@@ -261,6 +268,7 @@ function screenController() {
 
   boardDiv.addEventListener("click", boardClickHandler);
   closeBtn.addEventListener("click", closeModal);
+  resetBtn.addEventListener("click", resetGame);
 
   updateScreen();
 }
