@@ -87,17 +87,21 @@ function gameController(
 
   const getTieStatus = () => isTie;
 
-  const resetGame = () => {
-    activePlayer = players[0];
+  const newGame = () => {
+    switchPlayerTurn();
     gameOver = false;
     isTie = false;
-    wins = [];
 
     gameArray.forEach((row) => {
       row.forEach((column) => {
         column.clearCellValue();
       });
     });
+  };
+
+  const resetGame = () => {
+    newGame();
+    wins = [];
   };
 
   const switchPlayerTurn = () => {
@@ -181,6 +185,7 @@ function gameController(
     getTieStatus,
     getBoard: board.getBoard,
     resetGame,
+    newGame,
   };
 }
 
@@ -192,7 +197,8 @@ function screenController() {
   const overlay = document.querySelector("#overlay");
   const closeBtn = document.querySelector(".modal-close");
   const result = document.querySelector(".result");
-  const resetBtn = document.querySelector(".reset");
+  const resetBtns = document.querySelectorAll(".reset");
+  const newGameBtns = document.querySelectorAll(".new-game");
 
   const openModal = () => {
     modal.classList.add("active");
@@ -206,6 +212,12 @@ function screenController() {
 
   const resetGame = () => {
     game.resetGame();
+    closeModal();
+    updateScreen();
+  };
+
+  const newGame = () => {
+    game.newGame();
     updateScreen();
   };
 
@@ -220,8 +232,8 @@ function screenController() {
     const score1 = document.querySelector(".score1");
     const score2 = document.querySelector(".score2");
 
-    score1.textContent = `${playerOneScore}`;
-    score2.textContent = `${playerTwoScore}`;
+    score1.textContent = `Score: ${playerOneScore}`;
+    score2.textContent = `Score: ${playerTwoScore}`;
 
     if (gameStatus) {
       playerTurnDiv.textContent = `${activePlayer.name} won!!!`;
@@ -268,7 +280,12 @@ function screenController() {
 
   boardDiv.addEventListener("click", boardClickHandler);
   closeBtn.addEventListener("click", closeModal);
-  resetBtn.addEventListener("click", resetGame);
+  resetBtns.forEach((btn) => {
+    btn.addEventListener("click", resetGame);
+  });
+  newGameBtns.forEach((btn) => {
+    btn.addEventListener("click", newGame);
+  });
 
   updateScreen();
 }
