@@ -2,7 +2,7 @@
 I am storing the gameboard as an array inside of a gameboard object.
 */
 
-function gameboard() {
+const gameboard = (function gameboard() {
   const rows = 3;
   const columns = 3;
   const board = [];
@@ -25,7 +25,7 @@ function gameboard() {
   };
 
   return { getBoard, dropToken };
-}
+})();
 
 function cell() {
   let value = "-";
@@ -51,7 +51,7 @@ function gameController(
   playerOneName = "Player 1",
   playerTwoName = "Player 2"
 ) {
-  const board = gameboard();
+  const board = gameboard;
 
   const gameArray = board.getBoard();
 
@@ -66,6 +66,24 @@ function gameController(
   let gameOver = false;
 
   let isTie = false;
+
+  const wins = [];
+
+  const getPlayerOneScore = () => {
+    const playerOneWinCount = wins.filter(
+      (item) => item == players[0].token
+    ).length;
+
+    return playerOneWinCount;
+  };
+
+  const getPlayerTwoScore = () => {
+    const playerTwoWinCount = wins.filter(
+      (item) => item == players[1].token
+    ).length;
+
+    return playerTwoWinCount;
+  };
 
   const getGameStatus = () => gameOver;
 
@@ -116,6 +134,7 @@ function gameController(
       if (cellA !== "-" && cellB !== "-" && cellC !== "-") {
         if (cellA === cellB && cellB === cellC) {
           gameOver = true;
+          wins.push(getActivePlayer().token);
           break;
         }
       }
@@ -157,6 +176,8 @@ function gameController(
     playRound,
     getActivePlayer,
     getGameStatus,
+    getPlayerOneScore,
+    getPlayerTwoScore,
     getTieStatus,
     getBoard: board.getBoard,
   };
@@ -184,9 +205,16 @@ function screenController() {
   const updateScreen = () => {
     boardDiv.textContent = "";
     const board = game.getBoard();
+    const playerOneScore = game.getPlayerOneScore();
+    const playerTwoScore = game.getPlayerTwoScore();
     const activePlayer = game.getActivePlayer();
     const gameStatus = game.getGameStatus();
     const isTie = game.getTieStatus();
+    const score1 = document.querySelector(".score1");
+    const score2 = document.querySelector(".score2");
+
+    score1.textContent = `${playerOneScore}`;
+    score2.textContent = `${playerTwoScore}`;
 
     if (gameStatus) {
       playerTurnDiv.textContent = `${activePlayer.name} won!!!`;
