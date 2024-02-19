@@ -59,7 +59,7 @@ function cell() {
  **It contains the functions for resetting the scoreboard and playing a new game.
  */
 
-function gameController(
+const gameController = (function gameController(
   playerOneName = "Player 1",
   playerTwoName = "Player 2"
 ) {
@@ -191,15 +191,15 @@ function gameController(
     resetGame,
     newGame,
   };
-}
+})();
 
 /*My screenController reads and displays the game's state onto the screen.
  **It has access to several methods from the gameController,
  **such as newGame, resetGame, and playRound.
  */
 
-function screenController() {
-  const game = gameController();
+const screenController = (function screenController() {
+  const game = gameController;
   const boardDiv = document.querySelector(".board");
   const modal = document.querySelector("#modal");
   const overlay = document.querySelector("#overlay");
@@ -302,6 +302,6 @@ function screenController() {
   //Initial render:
 
   updateScreen();
-}
+})();
 
 screenController();
