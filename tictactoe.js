@@ -1,6 +1,7 @@
-/*The Gameboard represents the state of the board.
-I am storing the gameboard as an array inside of a gameboard object.
-*/
+/*Gameboard represents the state of my gameboard,
+ **a factory function that exposes a dropToken and getBoard method,
+ **and wrapped inside an IIFE so it cannot be reused to make additional instances.
+ */
 
 const gameboard = (function gameboard() {
   const rows = 3;
@@ -14,19 +15,25 @@ const gameboard = (function gameboard() {
     }
   }
 
-  //Method of getting our entire gameboard that our UI will need to render it.
+  //Method of getting my entire gameboard that my UI will need to render it.
   const getBoard = () => board;
 
+  //Method that takes in a player's choice and drops the player's token if it's an available cell.
   const dropToken = (row, column, player) => {
-    const availableCoordinate = board[row][column].getValue() === "-";
-
-    if (!availableCoordinate) return;
+    const availableCell = board[row][column].getValue() === "-";
+    if (!availableCell) return;
     board[row][column].addToken(player);
   };
 
   return { getBoard, dropToken };
 })();
 
+/*A cell represents one square on the gameboard.
+ ** = "-" if no token is in the square
+ ** = "X" if player one's token
+ ** = "O" if player two's token
+ ** Exposes addToken, getValue, and clearValue methods
+ */
 function cell() {
   let value = "-";
 
@@ -34,26 +41,29 @@ function cell() {
     value = playerToken;
   };
 
-  const clearCellValue = () => {
+  const getValue = () => value;
+
+  const clearValue = () => {
     value = "-";
   };
-
-  const getValue = () => value;
 
   return {
     addToken,
     getValue,
-    clearCellValue,
+    clearValue,
   };
 }
+
+/* My gameController controls the flow of the game.
+ **It keeps track of the current player, wins, and ties.
+ **It contains the functions for resetting the scoreboard and playing a new game.
+ */
 
 function gameController(
   playerOneName = "Player 1",
   playerTwoName = "Player 2"
 ) {
   const board = gameboard;
-
-  const gameArray = board.getBoard();
 
   const players = [
     { name: playerOneName, token: "X" },
@@ -63,38 +73,40 @@ function gameController(
 
   let activePlayer = players[0];
 
-  let gameOver = false;
+  const getActivePlayer = () => activePlayer;
+
+  const switchPlayerTurn = () => {
+    activePlayer = activePlayer === players[0] ? players[1] : players[0];
+  };
+
+  let gameWon = false;
+
+  const getGameStatus = () => gameWon;
 
   let isTie = false;
 
+  const getTieStatus = () => isTie;
+
   let wins = [];
 
-  const getPlayerOneScore = () => {
-    const playerOneWinCount = wins.filter(
-      (item) => item == players[0].token
-    ).length;
-    return playerOneWinCount;
+  const playerOneScore = () => {
+    const winCount = wins.filter((item) => item === players[0].token).length;
+    return winCount;
   };
 
-  const getPlayerTwoScore = () => {
-    const playerTwoWinCount = wins.filter(
-      (item) => item == players[1].token
-    ).length;
-    return playerTwoWinCount;
+  const playerTwoScore = () => {
+    const winCount = wins.filter((item) => item === players[1].token).length;
+    return winCount;
   };
-
-  const getGameStatus = () => gameOver;
-
-  const getTieStatus = () => isTie;
 
   const newGame = () => {
     switchPlayerTurn();
-    gameOver = false;
+    gameWon = false;
     isTie = false;
 
-    gameArray.forEach((row) => {
+    board.getBoard().forEach((row) => {
       row.forEach((column) => {
-        column.clearCellValue();
+        column.clearValue();
       });
     });
   };
@@ -104,28 +116,22 @@ function gameController(
     wins = [];
   };
 
-  const switchPlayerTurn = () => {
-    activePlayer = activePlayer === players[0] ? players[1] : players[0];
-  };
-
-  const getActivePlayer = () => activePlayer;
-
   const checkWinner = () => {
     const [
-      //use array destructuring to assign variable names to each cell
+      //using array destructuring to assign variable names to each cell
       [cell0, cell1, cell2],
       [cell3, cell4, cell5],
       [cell6, cell7, cell8],
-    ] = gameArray;
+    ] = board.getBoard();
 
     const winCombinations = [
-      [cell0, cell1, cell2], //rows
+      [cell0, cell1, cell2], //row combos
       [cell3, cell4, cell5],
       [cell6, cell7, cell8],
-      [cell0, cell3, cell6], //columns
+      [cell0, cell3, cell6], //column combos
       [cell1, cell4, cell7],
       [cell2, cell5, cell8],
-      [cell0, cell4, cell8], //diagnals
+      [cell0, cell4, cell8], //diagnal combos
       [cell2, cell4, cell6],
     ];
 
@@ -137,7 +143,7 @@ function gameController(
 
       if (cellA !== "-" && cellB !== "-" && cellC !== "-") {
         if (cellA === cellB && cellB === cellC) {
-          gameOver = true;
+          gameWon = true;
           wins.push(getActivePlayer().token);
           break;
         }
@@ -146,28 +152,26 @@ function gameController(
   };
 
   const checkDraw = () => {
-    let emptyCells = 0;
-    const gameWon = gameOver;
+    let availableCells = 0;
 
-    for (let i = 0; i < gameArray.length; i++) {
-      for (let j = 0; j < gameArray[i].length; j++) {
-        gameArray[i][j].getValue() == "-"
-          ? emptyCells++
-          : (emptyCells = emptyCells);
+    for (let i = 0; i < board.getBoard().length; i++) {
+      for (let j = 0; j < board.getBoard()[i].length; j++) {
+        board.getBoard()[i][j].getValue() === "-"
+          ? availableCells++
+          : (availableCells = availableCells);
       }
     }
-    if (emptyCells == 0 && gameWon == false) {
+    if (availableCells === 0 && gameWon === false) {
       isTie = true;
     }
   };
 
   const playRound = (row, column) => {
     board.dropToken(row, column, getActivePlayer().token);
-    // console.log(`Dropping ${getActivePlayer().name}'s token...`);
     checkWinner();
     checkDraw();
 
-    if (gameOver) {
+    if (gameWon) {
       return;
     } else if (isTie) {
       return;
@@ -177,26 +181,29 @@ function gameController(
   };
 
   return {
-    playRound,
+    getBoard: board.getBoard,
     getActivePlayer,
     getGameStatus,
-    getPlayerOneScore,
-    getPlayerTwoScore,
+    playerOneScore,
+    playerTwoScore,
     getTieStatus,
-    getBoard: board.getBoard,
+    playRound,
     resetGame,
     newGame,
   };
 }
 
+/*My screenController reads and displays the game's state onto the screen.
+ **It has access to several methods from the gameController,
+ **such as newGame, resetGame, and playRound.
+ */
+
 function screenController() {
   const game = gameController();
   const boardDiv = document.querySelector(".board");
-  const playerTurnDiv = document.querySelector(".turn");
   const modal = document.querySelector("#modal");
   const overlay = document.querySelector("#overlay");
   const closeBtn = document.querySelector(".modal-close");
-  const result = document.querySelector(".result");
   const resetBtns = document.querySelectorAll(".reset");
   const newGameBtns = document.querySelectorAll(".new-game");
 
@@ -218,33 +225,39 @@ function screenController() {
 
   const newGame = () => {
     game.newGame();
+    closeModal();
     updateScreen();
   };
 
   const updateScreen = () => {
-    boardDiv.textContent = "";
     const board = game.getBoard();
-    const playerOneScore = game.getPlayerOneScore();
-    const playerTwoScore = game.getPlayerTwoScore();
     const activePlayer = game.getActivePlayer();
+    const playerTurnDivs = document.querySelectorAll(".turn");
     const gameStatus = game.getGameStatus();
     const isTie = game.getTieStatus();
+    const playerOneScore = game.playerOneScore();
+    const playerTwoScore = game.playerTwoScore();
     const score1 = document.querySelector(".score1");
     const score2 = document.querySelector(".score2");
 
+    boardDiv.textContent = "";
     score1.textContent = `Score: ${playerOneScore}`;
     score2.textContent = `Score: ${playerTwoScore}`;
 
     if (gameStatus) {
-      playerTurnDiv.textContent = `${activePlayer.name} won!!!`;
-      result.textContent = `${activePlayer.name} won!!!`;
+      playerTurnDivs.forEach((div) => {
+        div.textContent = `${activePlayer.name} won!!!`;
+      });
       openModal();
     } else if (isTie) {
-      playerTurnDiv.textContent = "It's a tie :(";
-      result.textContent = "It's a tie :(";
+      playerTurnDivs.forEach((div) => {
+        div.textContent = "It's a tie :(";
+      });
       openModal();
     } else {
-      playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
+      playerTurnDivs.forEach((div) => {
+        div.textContent = `${activePlayer.name}'s turn...`;
+      });
     }
 
     board.forEach((row, rowIndex) => {
@@ -260,17 +273,16 @@ function screenController() {
   };
 
   function boardClickHandler(e) {
-    if (e.target.textContent != "-") {
+    if (e.target.textContent !== "-") {
       return;
     } else {
       const selectedColumn = e.target.dataset.column;
       const selectedRow = e.target.dataset.row;
-      const gameStatus = game.getGameStatus();
+      const gameWon = game.getGameStatus();
 
       if (!selectedColumn) return;
       if (!selectedRow) return;
-      if (gameStatus) return; // Does not allow clicks after win.
-
+      if (gameWon) return; // Does not allow clicks after win.
       game.playRound(selectedRow, selectedColumn);
       updateScreen();
     }
@@ -286,6 +298,8 @@ function screenController() {
   newGameBtns.forEach((btn) => {
     btn.addEventListener("click", newGame);
   });
+
+  //Initial render:
 
   updateScreen();
 }
