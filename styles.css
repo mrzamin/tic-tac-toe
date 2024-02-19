@@ -5,12 +5,16 @@
   padding: 0;
   --green-accent-color: rgb(58, 176, 58);
   --green-accent-color-opaque: rgb(58, 176, 58, 0.3);
+  --grey-color: #f0f0f0;
+  --grey-box-shadow: 0px 0px 5px 1px grey;
 }
 
 body {
   font-family: "Chakra Petch", sans-serif;
   font-size: 0.8rem;
 }
+
+/* Overlay styles. */
 
 #overlay {
   position: fixed;
@@ -20,7 +24,6 @@ body {
   right: 0;
   bottom: 0;
   transition: 200ms ease-in-out;
-
   background-color: var(--green-accent-color-opaque);
   pointer-events: none;
 }
@@ -30,24 +33,23 @@ body {
   opacity: 1;
 }
 
+/* Modal styles. */
+
 #modal {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) scale(0);
   transition: 200ms ease-in-out;
-  background-color: #f0f0f0;
-  box-shadow: 0px 0px 5px 1px grey;
+  background-color: var(--grey-color);
+  box-shadow: 0px 0px 5px 1px rgb(92, 91, 91);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 15px;
   align-items: center;
-
   border-radius: 10px;
   z-index: 10;
-  /* width: min(500px, 50%); */
-  width: 300px;
+  width: 280px;
   max-width: 80%;
   padding: 1rem;
 }
@@ -64,15 +66,24 @@ body {
 }
 
 #modal:hover {
-  background-color: white;
   box-shadow: 0px 0px 2px 1px var(--green-accent-color);
 }
 
-/* main grid */
+#modal button {
+  background-color: var(--grey-color);
+}
+
+#modal .modal-reset {
+  padding: 8px;
+  margin-top: 10px;
+}
+
+/* Main grid styles. */
+
 .wrapper {
   height: 100vh;
   display: grid;
-  grid-template-rows: 2fr 20fr 2fr;
+  grid-template-rows: 2fr 20fr 1fr;
 }
 
 .header {
@@ -84,12 +95,19 @@ body {
 }
 
 .header img {
-  width: 45px;
+  width: 40px;
 }
 
 .footer {
-  border: 1px solid red;
+  text-align: center;
+  padding-top: 8px;
 }
+
+.footer a {
+  color: var(--green-accent-color);
+}
+
+/* Main section styles. */
 
 .main-wrapper {
   padding: 2rem;
@@ -97,30 +115,28 @@ body {
 }
 
 .main {
-  /* border: 1px solid orange; */
+  height: 100%;
   display: flex;
   flex-wrap: wrap;
+  gap: 1rem;
   justify-content: center;
   align-items: center;
 }
 
-.section-1 {
-  display: flex;
-  flex-direction: column;
-}
+/* Gameboard styles. */
 
-.board-wrapper {
+.section-1 {
   background-color: white;
   display: grid;
   gap: 1rem;
   display: grid;
   place-items: center;
   padding: 1rem;
-  box-shadow: 0px 0px 5px 1px grey;
+  box-shadow: var(--grey-box-shadow);
   border-radius: 8px;
 }
 
-.board-wrapper h2:hover {
+.section-1 h2:hover {
   color: var(--green-accent-color);
 }
 
@@ -128,85 +144,7 @@ body {
   color: var(--green-accent-color);
 }
 
-.section-2 {
-  /* border: 1px solid blue; */
-  align-items: flex-start;
-
-  padding: 1rem;
-  display: grid;
-  grid-template-rows: repeat(4, 1fr);
-  gap: 1rem;
-}
-
-.score {
-  background-color: #f0f0f0;
-  padding: 1rem;
-
-  box-shadow: 0px 0px 5px 1px grey;
-}
-
-.score:hover {
-  background-color: white;
-  box-shadow: 0px 0px 2px 1px var(--green-accent-color);
-}
-
-.section-2 button {
-  font-size: 0.8rem;
-  padding: 5px;
-}
-.section-2 button,
-#modal button {
-  background-color: #f0f0f0;
-  border: none;
-  border-radius: 5px;
-  /* padding: 5px; */
-  text-transform: uppercase;
-  font-weight: bold;
-  font-family: "Chakra Petch", sans-serif;
-}
-
-#modal .modal-reset {
-  padding: 8px;
-  margin-top: 10px;
-}
-
-.section-2 button:hover,
-#modal button:hover {
-  background-color: rgb(58, 176, 58);
-  color: white;
-  border: none;
-}
-
-/* .main-wrapper {
-  position: fixed;
-  align-content: center;
-  /* top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); */
-/* border: 1px solid red;
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  place-content: center;
-} */
-
-/* .section-1 {
-  border: 1px solid blue;
-/* } */
-/* .gameboard {
-  /* height: 500px;
-  width: 390px; */
-
-/* padding: 1rem; */
-
-/* box-shadow: 0px 0px 5px 1px grey; */
-
-/* .board-wrapper {
-  display: flex;
-  flex-direction: column;
-  /* justify-content: space-between; */
-/* align-items: center; */
-/* border: 1px solid black; */
-/* height: 100%; */
+/*Gameboard cell styles. */
 
 .board {
   width: 300px;
@@ -219,7 +157,7 @@ body {
 .square {
   background-color: white;
   border: 2px solid #ccc;
-  color: #333;
+  color: rgb(99, 97, 97);
   font-family: "Chakra Petch", sans-serif;
   font-weight: 800;
   transition: background-color 0.3s ease;
@@ -227,22 +165,60 @@ body {
 }
 
 .square:hover {
-  /* background-color: #f0f0f0; */
-  background-color: rgb(58, 176, 58);
+  background-color: var(--green-accent-color);
   color: white;
 }
 
-/* .scorecard {
-  border: 1px solid purple;
-  height: 200px;
-  width: 200px;
-  /* height: 250px;
-  width: 250px; */
+/*Scoreboard styles. */
 
-/* .scorecard-container {
-  border: 1px solid green;
-  width: 100%;
+.section-2 {
+  width: 300px;
+  padding: 1rem;
   display: grid;
-  grid-template-columns: 1fr;
-  justify-items: center;
-} */
+  grid-template-rows: repeat(4, 1fr);
+  gap: 0.8rem;
+}
+
+.score {
+  background-color: var(--grey-color);
+  padding: 0.8rem;
+  box-shadow: var(--grey-box-shadow);
+  text-align: center;
+  display: grid;
+  row-gap: 5px;
+}
+
+/*Button styles. */
+
+.score,
+.section-2 button,
+#modal button {
+  border-radius: 5px;
+}
+
+.score:hover {
+  background-color: white;
+  box-shadow: 0px 0px 2px 1px var(--green-accent-color);
+}
+
+.section-2 button {
+  font-size: 0.8rem;
+  padding: 5px;
+  box-shadow: var(--grey-box-shadow);
+  background-color: var(--grey-color);
+}
+
+.section-2 button,
+#modal button {
+  border: none;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-family: "Chakra Petch", sans-serif;
+}
+
+.section-2 button:hover,
+#modal button:hover {
+  background-color: rgb(58, 176, 58);
+  color: white;
+  border: none;
+}
